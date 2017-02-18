@@ -1,0 +1,4 @@
+{
+  "name": "aurelia-telemetry-google-analytics",
+  "main": "dist/amd/index.d.ts"
+}
