@@ -1,42 +1,39 @@
-import {TelemetryClient, PageViewProperties, EventProperties, ErrorProperties, LogProperties} from 'aurelia-telemetry';
+import {logLevel} from 'aurelia-logging';
+import {TelemetryClient} from 'aurelia-telemetry';
+
+const levelMap = new Map<number, string>();
+levelMap.set(logLevel.debug, 'debug');
+levelMap.set(logLevel.info, 'info');
+levelMap.set(logLevel.warn, 'warn');
+levelMap.set(logLevel.error, 'error');
 
 export class GoogleAnalyticsTelemetryClient extends TelemetryClient {
 
   private ga: any = (window as any).ga;
   
-  trackPageView(properties: PageViewProperties) {
-    const otherProperties = Object.assign({}, properties);
-    delete otherProperties.title;
-    delete otherProperties.path;
-
-    this.ga('set', {
-      page: properties.path,
-      title: properties.title,
-    });
-    this.ga('send', 'pageview', otherProperties);
+  trackPageView(path: string) {
+    this.ga('set', { page: path });
+    this.ga('send', 'pageview');
   }
 
-  trackEvent(name: string, properties?: EventProperties) {
+  trackEvent(name: string, properties?: { [key: string]: any }) {
     this.ga('send', 'event', Object.assign({
       eventCategory: 'event',
       eventAction: name,
     }, properties));
   }
 
-  trackError(error: Error, properties?: ErrorProperties) {
-    this.ga('send', 'exception', Object.assign({
+  trackError(error: Error) {
+    this.ga('send', 'exception', {
       exDescription: error.message,
-    }, properties));
+    });
   }
 
-  trackLog(message: string, properties?: LogProperties) {
-    const otherProperties = Object.assign({}, properties);
-    delete otherProperties.level;
-
-    this.ga('send', 'event', Object.assign({
+  trackLog(message: string, level: number, ...args: any[]) {
+    this.ga('send', 'event', {
       eventCategory: 'log',
-      eventAction: properties.level || '(not set)',
+      eventAction: levelMap.get(level),
       eventLabel: message,
-    }, otherProperties));
+    });
   }
 }

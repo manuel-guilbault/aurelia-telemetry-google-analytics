@@ -3,8 +3,13 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define(["require", "exports", "aurelia-telemetry"], function (require, exports, aurelia_telemetry_1) {
+define(["require", "exports", "aurelia-logging", "aurelia-telemetry"], function (require, exports, aurelia_logging_1, aurelia_telemetry_1) {
     "use strict";
+    var levelMap = new Map();
+    levelMap.set(aurelia_logging_1.logLevel.debug, 'debug');
+    levelMap.set(aurelia_logging_1.logLevel.info, 'info');
+    levelMap.set(aurelia_logging_1.logLevel.warn, 'warn');
+    levelMap.set(aurelia_logging_1.logLevel.error, 'error');
     var GoogleAnalyticsTelemetryClient = (function (_super) {
         __extends(GoogleAnalyticsTelemetryClient, _super);
         function GoogleAnalyticsTelemetryClient() {
@@ -12,15 +17,9 @@ define(["require", "exports", "aurelia-telemetry"], function (require, exports, 
             _this.ga = window.ga;
             return _this;
         }
-        GoogleAnalyticsTelemetryClient.prototype.trackPageView = function (properties) {
-            var otherProperties = Object.assign({}, properties);
-            delete otherProperties.title;
-            delete otherProperties.path;
-            this.ga('set', {
-                page: properties.path,
-                title: properties.title,
-            });
-            this.ga('send', 'pageview', otherProperties);
+        GoogleAnalyticsTelemetryClient.prototype.trackPageView = function (path) {
+            this.ga('set', { page: path });
+            this.ga('send', 'pageview');
         };
         GoogleAnalyticsTelemetryClient.prototype.trackEvent = function (name, properties) {
             this.ga('send', 'event', Object.assign({
@@ -28,19 +27,21 @@ define(["require", "exports", "aurelia-telemetry"], function (require, exports, 
                 eventAction: name,
             }, properties));
         };
-        GoogleAnalyticsTelemetryClient.prototype.trackError = function (error, properties) {
-            this.ga('send', 'exception', Object.assign({
+        GoogleAnalyticsTelemetryClient.prototype.trackError = function (error) {
+            this.ga('send', 'exception', {
                 exDescription: error.message,
-            }, properties));
+            });
         };
-        GoogleAnalyticsTelemetryClient.prototype.trackLog = function (message, properties) {
-            var otherProperties = Object.assign({}, properties);
-            delete otherProperties.level;
-            this.ga('send', 'event', Object.assign({
+        GoogleAnalyticsTelemetryClient.prototype.trackLog = function (message, level) {
+            var args = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                args[_i - 2] = arguments[_i];
+            }
+            this.ga('send', 'event', {
                 eventCategory: 'log',
-                eventAction: properties.level || '(not set)',
+                eventAction: levelMap.get(level),
                 eventLabel: message,
-            }, otherProperties));
+            });
         };
         return GoogleAnalyticsTelemetryClient;
     }(aurelia_telemetry_1.TelemetryClient));
