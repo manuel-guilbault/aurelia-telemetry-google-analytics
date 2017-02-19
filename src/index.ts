@@ -5,7 +5,7 @@ import {TelemetryClient} from 'aurelia-telemetry';
 
 import {GoogleAnalyticsTelemetryClient} from './telemetry-client';
 
-function loadGaApi(propertyId: string) {
+function loadGaApi(propertyId: string, properties?: Object) {
   const scope = window as any;
 
   scope['GoogleAnalyticsObject'] = 'ga';
@@ -21,10 +21,10 @@ function loadGaApi(propertyId: string) {
   const firstScript = document.getElementsByTagName('script')[0];
   firstScript.parentNode.insertBefore(script, firstScript);
 
-  scope.ga('create', propertyId, 'auto');
+  scope.ga('create', propertyId, properties || 'auto');
 }
 
 export function configure(aurelia: FrameworkConfiguration, config?: any) {
-  loadGaApi(config.propertyId);
+  loadGaApi(config.propertyId, config.properties);
   aurelia.singleton(TelemetryClient, GoogleAnalyticsTelemetryClient);
 }
