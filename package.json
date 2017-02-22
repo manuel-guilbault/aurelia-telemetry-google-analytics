@@ -1,6 +1,6 @@
 {
   "name": "aurelia-telemetry-google-analytics",
-  "version": "0.1.1",
+  "version": "1.0.0-beta-1",
   "description": "Telemetry with Google Analytics for Aurelia applications.",
   "keywords": [
     "google",

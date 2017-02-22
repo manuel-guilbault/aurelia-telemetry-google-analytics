@@ -3,7 +3,6 @@ import {TelemetryClient} from 'aurelia-telemetry';
 
 export class GoogleAnalyticsTelemetryClient extends TelemetryClient {
 
-  private ga: any = (window as any).ga;
   levelMap: Map<number, string>;
 
   constructor() {
@@ -20,25 +19,25 @@ export class GoogleAnalyticsTelemetryClient extends TelemetryClient {
   }
   
   trackPageView(path: string) {
-    this.ga('set', { page: path });
-    this.ga('send', 'pageview');
+    ga('set', { page: path });
+    ga('send', 'pageview');
   }
 
   trackEvent(name: string, properties?: { [key: string]: any }) {
-    this.ga('send', 'event', Object.assign({
+    ga('send', 'event', Object.assign({
       eventCategory: 'event',
       eventAction: name,
     }, properties));
   }
 
   trackError(error: Error) {
-    this.ga('send', 'exception', {
-      exDescription: error.message,
+    ga('send', 'exception', {
+      exDescription: `${error.name}: ${error.message}`,
     });
   }
 
   trackLog(message: string, level: number, ...args: any[]) {
-    this.ga('send', 'event', {
+    ga('send', 'event', {
       eventCategory: 'log',
       eventAction: this.mapToEventAction(level),
       eventLabel: message,

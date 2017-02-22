@@ -1,4 +1,7 @@
 {
   "name": "aurelia-telemetry-google-analytics",
-  "main": "dist/amd/index.d.ts"
+  "main": "dist/amd/index.d.ts",
+  "globalDependencies": {
+    "google.analytics": "registry:dt/google.analytics#0.0.0+20160510002910"
+  }
 }

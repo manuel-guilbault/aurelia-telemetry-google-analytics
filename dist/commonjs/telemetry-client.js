@@ -10,7 +10,6 @@ var GoogleAnalyticsTelemetryClient = (function (_super) {
     __extends(GoogleAnalyticsTelemetryClient, _super);
     function GoogleAnalyticsTelemetryClient() {
         var _this = _super.call(this) || this;
-        _this.ga = window.ga;
         _this.levelMap = new Map();
         _this.levelMap.set(aurelia_logging_1.logLevel.debug, 'debug');
         _this.levelMap.set(aurelia_logging_1.logLevel.info, 'info');
@@ -22,18 +21,18 @@ var GoogleAnalyticsTelemetryClient = (function (_super) {
         return this.levelMap.get(logLevel) || 'default';
     };
     GoogleAnalyticsTelemetryClient.prototype.trackPageView = function (path) {
-        this.ga('set', { page: path });
-        this.ga('send', 'pageview');
+        ga('set', { page: path });
+        ga('send', 'pageview');
     };
     GoogleAnalyticsTelemetryClient.prototype.trackEvent = function (name, properties) {
-        this.ga('send', 'event', Object.assign({
+        ga('send', 'event', Object.assign({
             eventCategory: 'event',
             eventAction: name,
         }, properties));
     };
     GoogleAnalyticsTelemetryClient.prototype.trackError = function (error) {
-        this.ga('send', 'exception', {
-            exDescription: error.message,
+        ga('send', 'exception', {
+            exDescription: error.name + ": " + error.message,
         });
     };
     GoogleAnalyticsTelemetryClient.prototype.trackLog = function (message, level) {
@@ -41,7 +40,7 @@ var GoogleAnalyticsTelemetryClient = (function (_super) {
         for (var _i = 2; _i < arguments.length; _i++) {
             args[_i - 2] = arguments[_i];
         }
-        this.ga('send', 'event', {
+        ga('send', 'event', {
             eventCategory: 'log',
             eventAction: this.mapToEventAction(level),
             eventLabel: message,

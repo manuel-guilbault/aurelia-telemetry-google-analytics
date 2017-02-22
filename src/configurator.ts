@@ -1,24 +1,27 @@
 export class Configurator {
 
-  get ga() {
-    return (window as any).ga;
+  loadApi() {
+    Object.assign(window, {
+      GoogleAnalyticsObject: 'ga',
+      ga: this.createGa()
+    });
+
+    this.loadScript('https://www.google-analytics.com/analytics.js', { async: true });
   }
 
-  private createGa() {
+  private createGa(): UniversalAnalytics.ga {
     const ga: any = function() {
-      (ga.q = ga.q || []).push(arguments);
+      ga.q.push(arguments);
     };
+    ga.q = [];
     ga.l = new Date().getTime();
     return ga;
   }
 
-  loadApi() {
-    (window as any)['GoogleAnalyticsObject'] = 'ga';
-    (window as any).ga = this.createGa();
-
+  private loadScript(url: string, properties: { async: boolean } = { async: false }) {
     const script: HTMLScriptElement = document.createElement('script');
-    script.async = true;
-    script.src = 'https://www.google-analytics.com/analytics.js';
+    script.async = properties.async;
+    script.src = url;
     
     const firstScript = document.getElementsByTagName('script')[0];
     firstScript.parentNode.insertBefore(script, firstScript);

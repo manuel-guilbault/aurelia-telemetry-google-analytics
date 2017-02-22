@@ -1,6 +1,5 @@
 import { TelemetryClient } from 'aurelia-telemetry';
 export declare class GoogleAnalyticsTelemetryClient extends TelemetryClient {
-    private ga;
     levelMap: Map<number, string>;
     constructor();
     private mapToEventAction(logLevel);

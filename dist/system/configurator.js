@@ -8,26 +8,26 @@ System.register([], function (exports_1, context_1) {
             Configurator = (function () {
                 function Configurator() {
                 }
-                Object.defineProperty(Configurator.prototype, "ga", {
-                    get: function () {
-                        return window.ga;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
+                Configurator.prototype.loadApi = function () {
+                    Object.assign(window, {
+                        GoogleAnalyticsObject: 'ga',
+                        ga: this.createGa()
+                    });
+                    this.loadScript('https://www.google-analytics.com/analytics.js', { async: true });
+                };
                 Configurator.prototype.createGa = function () {
                     var ga = function () {
-                        (ga.q = ga.q || []).push(arguments);
+                        ga.q.push(arguments);
                     };
+                    ga.q = [];
                     ga.l = new Date().getTime();
                     return ga;
                 };
-                Configurator.prototype.loadApi = function () {
-                    window['GoogleAnalyticsObject'] = 'ga';
-                    window.ga = this.createGa();
+                Configurator.prototype.loadScript = function (url, properties) {
+                    if (properties === void 0) { properties = { async: false }; }
                     var script = document.createElement('script');
-                    script.async = true;
-                    script.src = 'https://www.google-analytics.com/analytics.js';
+                    script.async = properties.async;
+                    script.src = url;
                     var firstScript = document.getElementsByTagName('script')[0];
                     firstScript.parentNode.insertBefore(script, firstScript);
                 };
