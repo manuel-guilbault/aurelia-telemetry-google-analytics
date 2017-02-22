@@ -1,3 +1,5 @@
+export * from './configurator';
 export * from './telemetry-client';
 import { FrameworkConfiguration } from 'aurelia-framework';
-export declare function configure(aurelia: FrameworkConfiguration, config?: any): void;
+import { Configurator } from './configurator';
+export declare function configure(aurelia: FrameworkConfiguration, config?: ((c: Configurator) => void)): void;

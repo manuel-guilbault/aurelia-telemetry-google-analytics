@@ -5,18 +5,21 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 define(["require", "exports", "aurelia-logging", "aurelia-telemetry"], function (require, exports, aurelia_logging_1, aurelia_telemetry_1) {
     "use strict";
-    var levelMap = new Map();
-    levelMap.set(aurelia_logging_1.logLevel.debug, 'debug');
-    levelMap.set(aurelia_logging_1.logLevel.info, 'info');
-    levelMap.set(aurelia_logging_1.logLevel.warn, 'warn');
-    levelMap.set(aurelia_logging_1.logLevel.error, 'error');
     var GoogleAnalyticsTelemetryClient = (function (_super) {
         __extends(GoogleAnalyticsTelemetryClient, _super);
         function GoogleAnalyticsTelemetryClient() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
+            var _this = _super.call(this) || this;
             _this.ga = window.ga;
+            _this.levelMap = new Map();
+            _this.levelMap.set(aurelia_logging_1.logLevel.debug, 'debug');
+            _this.levelMap.set(aurelia_logging_1.logLevel.info, 'info');
+            _this.levelMap.set(aurelia_logging_1.logLevel.warn, 'warn');
+            _this.levelMap.set(aurelia_logging_1.logLevel.error, 'error');
             return _this;
         }
+        GoogleAnalyticsTelemetryClient.prototype.mapToEventAction = function (logLevel) {
+            return this.levelMap.get(logLevel) || 'default';
+        };
         GoogleAnalyticsTelemetryClient.prototype.trackPageView = function (path) {
             this.ga('set', { page: path });
             this.ga('send', 'pageview');
@@ -39,7 +42,7 @@ define(["require", "exports", "aurelia-logging", "aurelia-telemetry"], function 
             }
             this.ga('send', 'event', {
                 eventCategory: 'log',
-                eventAction: levelMap.get(level),
+                eventAction: this.mapToEventAction(level),
                 eventLabel: message,
             });
         };

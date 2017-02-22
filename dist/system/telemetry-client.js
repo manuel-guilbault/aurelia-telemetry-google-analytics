@@ -6,7 +6,7 @@ System.register(["aurelia-logging", "aurelia-telemetry"], function (exports_1, c
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var __moduleName = context_1 && context_1.id;
-    var aurelia_logging_1, aurelia_telemetry_1, levelMap, GoogleAnalyticsTelemetryClient;
+    var aurelia_logging_1, aurelia_telemetry_1, GoogleAnalyticsTelemetryClient;
     return {
         setters: [
             function (aurelia_logging_1_1) {
@@ -17,18 +17,21 @@ System.register(["aurelia-logging", "aurelia-telemetry"], function (exports_1, c
             }
         ],
         execute: function () {
-            levelMap = new Map();
-            levelMap.set(aurelia_logging_1.logLevel.debug, 'debug');
-            levelMap.set(aurelia_logging_1.logLevel.info, 'info');
-            levelMap.set(aurelia_logging_1.logLevel.warn, 'warn');
-            levelMap.set(aurelia_logging_1.logLevel.error, 'error');
             GoogleAnalyticsTelemetryClient = (function (_super) {
                 __extends(GoogleAnalyticsTelemetryClient, _super);
                 function GoogleAnalyticsTelemetryClient() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this = _super.call(this) || this;
                     _this.ga = window.ga;
+                    _this.levelMap = new Map();
+                    _this.levelMap.set(aurelia_logging_1.logLevel.debug, 'debug');
+                    _this.levelMap.set(aurelia_logging_1.logLevel.info, 'info');
+                    _this.levelMap.set(aurelia_logging_1.logLevel.warn, 'warn');
+                    _this.levelMap.set(aurelia_logging_1.logLevel.error, 'error');
                     return _this;
                 }
+                GoogleAnalyticsTelemetryClient.prototype.mapToEventAction = function (logLevel) {
+                    return this.levelMap.get(logLevel) || 'default';
+                };
                 GoogleAnalyticsTelemetryClient.prototype.trackPageView = function (path) {
                     this.ga('set', { page: path });
                     this.ga('send', 'pageview');
@@ -51,7 +54,7 @@ System.register(["aurelia-logging", "aurelia-telemetry"], function (exports_1, c
                     }
                     this.ga('send', 'event', {
                         eventCategory: 'log',
-                        eventAction: levelMap.get(level),
+                        eventAction: this.mapToEventAction(level),
                         eventLabel: message,
                     });
                 };

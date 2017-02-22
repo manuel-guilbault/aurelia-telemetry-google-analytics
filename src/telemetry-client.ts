@@ -1,15 +1,23 @@
 import {logLevel} from 'aurelia-logging';
 import {TelemetryClient} from 'aurelia-telemetry';
 
-const levelMap = new Map<number, string>();
-levelMap.set(logLevel.debug, 'debug');
-levelMap.set(logLevel.info, 'info');
-levelMap.set(logLevel.warn, 'warn');
-levelMap.set(logLevel.error, 'error');
-
 export class GoogleAnalyticsTelemetryClient extends TelemetryClient {
 
   private ga: any = (window as any).ga;
+  levelMap: Map<number, string>;
+
+  constructor() {
+    super();
+    this.levelMap = new Map<number, string>();
+    this.levelMap.set(logLevel.debug, 'debug');
+    this.levelMap.set(logLevel.info, 'info');
+    this.levelMap.set(logLevel.warn, 'warn');
+    this.levelMap.set(logLevel.error, 'error');
+  }
+
+  private mapToEventAction(logLevel: number) {
+    return this.levelMap.get(logLevel) || 'default'
+  }
   
   trackPageView(path: string) {
     this.ga('set', { page: path });
@@ -32,7 +40,7 @@ export class GoogleAnalyticsTelemetryClient extends TelemetryClient {
   trackLog(message: string, level: number, ...args: any[]) {
     this.ga('send', 'event', {
       eventCategory: 'log',
-      eventAction: levelMap.get(level),
+      eventAction: this.mapToEventAction(level),
       eventLabel: message,
     });
   }
